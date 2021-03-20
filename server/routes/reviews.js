@@ -129,24 +129,30 @@ router.patch("/", auth.authenticate, (req, res) => {
       // const u = user.movies.some(m => m.movieid === movieid);
       // console.log(user.movies);
       if (user.movies && user.movies.some((m) => m.movieid === movieid)) {
-        user.movies.forEach((movie) => {
-          if (movie.movieid === movieid) {
-            movie.rate = rate;
-            movie.review = review;
+        user.movies.forEach((usermovie) => {
+          if (usermovie.movieid === movieid) {
+            usermovie.rate = rate;
+            usermovie.review = review;
           }
         });
         user.save().then(() => {
           //updateing record in movie document
           Movie.findOne({ movieid: movieid }).then((movie) => {
-            const moviedata = {
-              email: user.email,
-              userid: req.session.userId,
-              rate: rate,
-              review: review,
-            };
+            // const moviedata = {
+            //   email: user.email,
+            //   userid: req.session.userId,
+            //   rate: rate,
+            //   review: review,
+            // };
             if (movie) {
               //if movie is found in db
-              movie.data.push(moviedata);
+              movie.data.forEach((item) => {
+                if (item.userid === req.session.userId) {
+                  item.rate = rate;
+                  item.review = review;
+                }
+              });
+              // movie.data.push(moviedata);
               movie
                 .save()
                 .then(() => {
