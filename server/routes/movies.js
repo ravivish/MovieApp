@@ -80,10 +80,11 @@ router.get("/:id", (req, res) => {
     res.status(400).send({ error: "movieid is missing" });
     return;
   }
-
-  Movie.find({ movieid: req.params.id }).then((movie) => {
+  
+  Movie.findOne({ movieid: req.params.id }).then((movie) => {
     if (!movie) {
       res.status(400).send({ error: "movie not found" });
+      return;
     }
     res.status(200).send(movie);
   });
