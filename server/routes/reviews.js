@@ -73,14 +73,18 @@ router.patch("/", auth.authenticate, (req, res) => {
         res.status(400).send({ error: "User not found" });
         return;
       }
-      user.movies.forEach((movie) => {
-        if (movie.movieid === req.body.movieid) {
-          movie.rate = req.body.rate;
-          movie.review = req.body.review;
-        }
-      });
-      user.save();
-      res.status(204).send();
+      if (user.movies && user.movies.incudes(req.body.movieid)) {
+        user.movies.forEach((movie) => {
+          if (movie.movieid === req.body.movieid) {
+            movie.rate = req.body.rate;
+            movie.review = req.body.review;
+          }
+        });
+        user.save();
+        res.status(204).send();
+      } else {
+        res.status(400).send({error: "user did not reviewed this movie yet"});
+      }
     })
     .catch((err) => {
       res.status(500).send({ error: "Internal Server Error" });
