@@ -89,9 +89,6 @@ router.post("/", auth.authenticate, (req, res) => {
             res.status(500).send({ error: "Internal Server Error" });
             return;
           });
-
-        // res.status(204).send();
-        // return;
       }
     })
     .catch(() => {
@@ -126,8 +123,7 @@ router.patch("/", auth.authenticate, (req, res) => {
         res.status(400).send({ error: "User not found" });
         return;
       }
-      // const u = user.movies.some(m => m.movieid === movieid);
-      // console.log(user.movies);
+      
       if (user.movies && user.movies.some((m) => m.movieid === movieid)) {
         user.movies.forEach((usermovie) => {
           if (usermovie.movieid === movieid) {
@@ -137,13 +133,7 @@ router.patch("/", auth.authenticate, (req, res) => {
         });
         user.save().then(() => {
           //updateing record in movie document
-          Movie.findOne({ movieid: movieid }).then((movie) => {
-            // const moviedata = {
-            //   email: user.email,
-            //   userid: req.session.userId,
-            //   rate: rate,
-            //   review: review,
-            // };
+          Movie.findOne({ movieid: movieid }).then((movie) => {            
             if (movie) {
               //if movie is found in db
               movie.data.forEach((item) => {
@@ -152,7 +142,7 @@ router.patch("/", auth.authenticate, (req, res) => {
                   item.review = review;
                 }
               });
-              // movie.data.push(moviedata);
+              
               movie
                 .save()
                 .then(() => {
@@ -166,8 +156,7 @@ router.patch("/", auth.authenticate, (req, res) => {
             }
           });
         });
-        // res.status(204).send();
-        // return;
+        
       } else {
         res.status(400).send({ error: "user did not reviewed this movie yet" });
         return;
